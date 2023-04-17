@@ -1,0 +1,63 @@
+//
+//  RegisterView.swift
+//  ChatSwiftUI
+//
+//  Created by Александр Устич on 15.04.2023.
+//
+
+
+// m@mail.com
+// password
+
+
+import SwiftUI
+import Firebase
+
+struct RegisterView: View {
+    @State var email: String = ""
+    @State var password: String = ""
+    @State var passwordError: String = ""
+    
+    @Binding var showingChat: Bool
+    @Binding var isPresented: Bool
+    
+    var body: some View {
+        VStack(alignment: .center) {
+            Group {
+                TextField("Email", text: $email)
+                    .keyboardType(.emailAddress)
+                SecureField("Password", text: $password)
+            }
+            .autocapitalization(.none)
+            .disableAutocorrection(true)
+            .padding()
+            .background(Color.gray.opacity(0.2))
+            .cornerRadius(10)
+            Text(passwordError)
+                .foregroundColor(.red)
+                .font(.system(size: 15))
+                .bold()
+            
+            Button("Register") {
+                Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+                    if let p = error {
+                        passwordError = p.localizedDescription
+                    } else {
+                        passwordError = ""
+                        showingChat = true
+                        isPresented = false
+                    }
+                }
+            }
+        }
+        .padding()
+        .padding(.top, 45)
+        .frame(maxHeight: .infinity, alignment: .top)
+    }
+}
+
+struct RegisterView_Previews: PreviewProvider {
+    static var previews: some View {
+        RegisterView(showingChat: .constant(false), isPresented: .constant(true))
+    }
+}
