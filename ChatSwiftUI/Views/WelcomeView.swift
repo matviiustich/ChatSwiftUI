@@ -12,13 +12,11 @@ struct WelcomeView: View {
     @State private var isShowingRegister = false
     @State var presentChat = false
     
+    @Binding var presentWelcome: Bool
+    
     var body: some View {
         NavigationView {
-            if let _ = UserCredentials.shared.email, let _ = UserCredentials.shared.password {
-                ChatView()
-            } else {
-                authenticationView
-            }
+            authenticationView
         }
     }
     
@@ -45,27 +43,24 @@ struct WelcomeView: View {
                         }
                         .font(.system(size: 20))
                         .padding(.bottom)
-                        NavigationLink(destination: ChatView(), isActive: $presentChat) {
-                            EmptyView()
-                        }
                     }
                 }
                 .frame(maxHeight: .infinity, alignment: .bottom)
             }
         }
         .sheet(isPresented: $isShowingLogIn) {
-            LogInView(showingChat: $presentChat, isPresented: $isShowingLogIn)
+            LogInView(presentWelcome: $presentWelcome, isPresented: $isShowingLogIn)
                 .presentationDetents([.medium, .large])
         }
         .sheet(isPresented: $isShowingRegister) {
-            RegisterView(showingChat: $presentChat, isPresented: $isShowingRegister)
+            RegisterView(presentWelcome: $presentWelcome, isPresented: $isShowingRegister)
                 .presentationDetents([.medium, .large])
         }
     }
 }
 
-struct WelcomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        WelcomeView()
-    }
-}
+//struct WelcomeView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        WelcomeView()
+//    }
+//}

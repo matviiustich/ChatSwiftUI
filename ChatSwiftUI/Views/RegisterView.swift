@@ -18,7 +18,7 @@ struct RegisterView: View {
     @State var password: String = ""
     @State var passwordError: String = ""
     
-    @Binding var showingChat: Bool
+    @Binding var presentWelcome: Bool
     @Binding var isPresented: Bool
     
     var body: some View {
@@ -46,7 +46,7 @@ struct RegisterView: View {
                         UserCredentials.shared.email = email
                         UserCredentials.shared.password = password
                         passwordError = ""
-                        showingChat = true
+                        presentWelcome = false
                         isPresented = false
                     }
                 }
@@ -60,6 +60,6 @@ struct RegisterView: View {
 
 struct RegisterView_Previews: PreviewProvider {
     static var previews: some View {
-        RegisterView(showingChat: .constant(false), isPresented: .constant(true))
+        RegisterView(presentWelcome: .constant(false), isPresented: .constant(true))
     }
 }

@@ -14,7 +14,7 @@ struct LogInView: View {
     @State var password: String = ""
     @State var passwordError: String = ""
     
-    @Binding var showingChat: Bool
+    @Binding var presentWelcome: Bool
     @Binding var isPresented: Bool
     
     var body: some View {
@@ -42,7 +42,7 @@ struct LogInView: View {
                         } else {
                             UserCredentials.shared.email = email
                             UserCredentials.shared.password = password
-                            showingChat = true
+                            presentWelcome = false
                             isPresented = false
                             passwordError = ""
                         }
@@ -59,6 +59,6 @@ struct LogInView: View {
 
 struct LogInView_Previews: PreviewProvider {
     static var previews: some View {
-        LogInView(showingChat: .constant(false), isPresented: .constant(true))
+        LogInView(presentWelcome: .constant(false), isPresented: .constant(true))
     }
 }

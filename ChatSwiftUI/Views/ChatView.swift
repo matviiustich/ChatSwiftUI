@@ -9,7 +9,6 @@ import SwiftUI
 import Firebase
 
 struct ChatView: View {
-    @Environment(\.presentationMode) var presentationMode
     @State private var message = ""
     @State private var messages: [Message] = [
         Message(text: "Hello", isMe: false),
@@ -18,6 +17,8 @@ struct ChatView: View {
         Message(text: "I'm good, thanks. How about you?", isMe: true),
         Message(text: "I'm doing great, thanks for asking!", isMe: false)
     ]
+    
+    @Binding var presentWelcome: Bool
     
     var body: some View {
         NavigationView {
@@ -51,6 +52,7 @@ struct ChatView: View {
             do {
                 try Auth.auth().signOut()
                 UserCredentials.shared.clear()
+                presentWelcome = true
 //                presentationMode.wrappedValue.dismiss()
             } catch {
                 print("Error signing out")
@@ -112,6 +114,6 @@ struct ChatBubbleShape: Shape {
 
 struct ChatView_Preview: PreviewProvider {
     static var previews: some View {
-        ChatView()
+        ChatView(presentWelcome: .constant(false))
     }
 }
