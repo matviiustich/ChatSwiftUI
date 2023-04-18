@@ -9,25 +9,28 @@ import SwiftUI
 import Firebase
 
 struct ChatView: View {
+    
     @State private var message = ""
-    @State private var messages: [Message] = [
-        Message(text: "Hello", isMe: false),
-        Message(text: "Hi!", isMe: true),
-        Message(text: "How are you?", isMe: false),
-        Message(text: "I'm good, thanks. How about you?", isMe: true),
-        Message(text: "I'm doing great, thanks for asking!", isMe: false)
-    ]
+//    @State private var messages: [Message] = [
+//        Message(text: "Hello", isMe: false),
+//        Message(text: "Hi!", isMe: true),
+//        Message(text: "How are you?", isMe: false),
+//        Message(text: "I'm good, thanks. How about you?", isMe: true),
+//        Message(text: "I'm doing great, thanks for asking!", isMe: false)
+//    ]
     
     @Binding var presentWelcome: Bool
+    
+    let db = Firestore.firestore()
     
     var body: some View {
         NavigationView {
             VStack {
-                ScrollView {
+                ScrollView(showsIndicators: false) {
                     LazyVStack(spacing: 15) {
-                        ForEach(messages) { message in
-                            ChatBubble(message: message)
-                        }
+//                        ForEach(messages) { message in
+//                            ChatBubble(message: message)
+//                        }
                     }
                 }
                 .padding()
@@ -36,7 +39,6 @@ struct ChatView: View {
                     TextField("Message", text: $message)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding(.horizontal)
-                    
                     Button(action: sendMessage, label: {
                         Image(systemName: "arrow.up.circle.fill")
                             .font(.system(size: 40))
@@ -44,16 +46,16 @@ struct ChatView: View {
                     })
                     .padding()
                 }
-//                .padding()
+
             }
+            .animation(.default)
         }
         .navigationBarTitle("Messages")
         .navigationBarItems(trailing: Button(action: {
             do {
                 try Auth.auth().signOut()
-                UserCredentials.shared.clear()
                 presentWelcome = true
-//                presentationMode.wrappedValue.dismiss()
+                //                presentationMode.wrappedValue.dismiss()
             } catch {
                 print("Error signing out")
             }
@@ -63,35 +65,35 @@ struct ChatView: View {
     }
     
     func sendMessage() {
-        guard !message.isEmpty else {
-            return
+        if message != "", let messageSender = Auth.auth().currentUser?.email {
+            
         }
-        messages.append(Message(text: message, isMe: true))
+//        messages.append(Message(text: message, isMe: true))
         message = ""
     }
 }
 
-struct Message: Identifiable {
-    let id = UUID()
-    let text: String
-    let isMe: Bool
-}
+//struct Message: Identifiable {
+//    let id = UUID()
+//    let text: String
+//    let isMe: Bool
+//}
 
 struct ChatBubble: View {
     var message: Message
     
     var body: some View {
         HStack {
-            if message.isMe {
+            if message.sender == Auth.auth().currentUser?.email {
                 Spacer()
-                Text(message.text)
+                Text(message.body)
                     .foregroundColor(.white)
                     .padding()
                     .background(Color.blue)
                     .clipShape(ChatBubbleShape(isMe: true))
                     .padding(.trailing, 10)
             } else {
-                Text(message.text)
+                Text(message.body)
                     .foregroundColor(.black)
                     .padding()
                     .background(Color(#colorLiteral(red: 0.9137253165, green: 0.9137256742, blue: 0.9223343134, alpha: 1)))
@@ -100,6 +102,14 @@ struct ChatBubble: View {
                 Spacer()
             }
         }
+        .contextMenu(menuItems: {
+            Button(action: {
+                let generator = UINotificationFeedbackGenerator()
+                generator.notificationOccurred(.success)
+            }) {
+                Label("Share", image: "square.and.arrow.up")
+            }
+        })
     }
 }
 

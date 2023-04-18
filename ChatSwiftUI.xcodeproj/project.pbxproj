@@ -19,7 +19,8 @@
 		D8C9530329EB32B000026127 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D8C9530229EB32B000026127 /* FirebaseAuth */; };
 		D8C9530529EB32B000026127 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D8C9530429EB32B000026127 /* FirebaseFirestore */; };
 		D8C9530729EC292900026127 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C9530629EC292900026127 /* ChatView.swift */; };
-		D8F00F9B29EE85F0007EC3A6 /* UserCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F00F9A29EE85F0007EC3A6 /* UserCredentials.swift */; };
+		D8F00FA429EF38C8007EC3A6 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F00FA329EF38C8007EC3A6 /* Message.swift */; };
+		D8F00FAE29EF406D007EC3A6 /* InitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F00FAD29EF406D007EC3A6 /* InitView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,7 +35,8 @@
 		D8C952FD29EA857400026127 /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		D8C952FF29EB2ED500026127 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D8C9530629EC292900026127 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
-		D8F00F9A29EE85F0007EC3A6 /* UserCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCredentials.swift; sourceTree = "<group>"; };
+		D8F00FA329EF38C8007EC3A6 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		D8F00FAD29EF406D007EC3A6 /* InitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,7 +71,7 @@
 		D8C952E429EA844700026127 /* ChatSwiftUI */ = {
 			isa = PBXGroup;
 			children = (
-				D8F00F9929EE85CA007EC3A6 /* UserInfo */,
+				D8F00FA229EF38BC007EC3A6 /* Models */,
 				D8C952F829EA849200026127 /* Views */,
 				D8C952E529EA844700026127 /* ChatSwiftUIApp.swift */,
 				D8C952E929EA844900026127 /* Assets.xcassets */,
@@ -96,16 +98,17 @@
 				D8C952FB29EA855000026127 /* LogInView.swift */,
 				D8C952FD29EA857400026127 /* RegisterView.swift */,
 				D8C9530629EC292900026127 /* ChatView.swift */,
+				D8F00FAD29EF406D007EC3A6 /* InitView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
 		};
-		D8F00F9929EE85CA007EC3A6 /* UserInfo */ = {
+		D8F00FA229EF38BC007EC3A6 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				D8F00F9A29EE85F0007EC3A6 /* UserCredentials.swift */,
+				D8F00FA329EF38C8007EC3A6 /* Message.swift */,
 			);
-			path = UserInfo;
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -189,9 +192,10 @@
 				D8C952FC29EA855000026127 /* LogInView.swift in Sources */,
 				D8C952FA29EA84A200026127 /* WelcomeView.swift in Sources */,
 				D8C952EF29EA844900026127 /* Persistence.swift in Sources */,
+				D8F00FA429EF38C8007EC3A6 /* Message.swift in Sources */,
 				D8C952FE29EA857400026127 /* RegisterView.swift in Sources */,
+				D8F00FAE29EF406D007EC3A6 /* InitView.swift in Sources */,
 				D8C9530729EC292900026127 /* ChatView.swift in Sources */,
-				D8F00F9B29EE85F0007EC3A6 /* UserCredentials.swift in Sources */,
 				D8C952E629EA844700026127 /* ChatSwiftUIApp.swift in Sources */,
 				D8C952F229EA844900026127 /* ChatSwiftUI.xcdatamodeld in Sources */,
 			);
