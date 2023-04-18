@@ -50,7 +50,8 @@ struct ChatView: View {
         .navigationBarItems(trailing: Button(action: {
             do {
                 try Auth.auth().signOut()
-                presentationMode.wrappedValue.dismiss()
+                UserCredentials.shared.clear()
+//                presentationMode.wrappedValue.dismiss()
             } catch {
                 print("Error signing out")
             }

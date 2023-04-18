@@ -43,6 +43,8 @@ struct RegisterView: View {
                     if let p = error {
                         passwordError = p.localizedDescription
                     } else {
+                        UserCredentials.shared.email = email
+                        UserCredentials.shared.password = password
                         passwordError = ""
                         showingChat = true
                         isPresented = false

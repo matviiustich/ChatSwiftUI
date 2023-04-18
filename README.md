@@ -1,2 +1,2 @@
 # ChatSwiftUI
-iOS Chat application built with Swift & SwiftUI
+iOS Messenger application built with Swift & SwiftUI
