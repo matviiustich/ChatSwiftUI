@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct Message {
+struct Message: Identifiable {
+    let id = UUID()
     let sender: String
     let body: String
 }
