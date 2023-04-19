@@ -29,14 +29,16 @@ struct ChatView: View {
                             ChatBubble(message: message)
                         }
                     }
+                    .padding()
+                    .onAppear(perform: loadMessages)
+                    .animation(.default)
                 }
-                .padding()
-                .onAppear(perform: loadMessages)
                 
                 HStack(spacing: 15) {
                     TextField("Message", text: $message)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding(.horizontal)
+                        
                     Button(action: sendMessage, label: {
                         Image(systemName: "arrow.up.circle.fill")
                             .font(.system(size: 40))
@@ -59,13 +61,15 @@ struct ChatView: View {
         }, label: {
             Text("Log Out")
         }))
+
     }
     
     func sendMessage() {
         if message != "", let messageSender = Auth.auth().currentUser?.email {
             db.collection("messages").addDocument(data: [
                 "sender": messageSender,
-                "body": message
+                "body": message,
+                "date": Date().timeIntervalSince1970
             ]) { (error) in
                 if let e = error {
                     print("The error occured while saving data to Firestore, \(e)")
@@ -78,23 +82,26 @@ struct ChatView: View {
     }
     
     private func loadMessages() -> Void {
-        db.collection("messages").getDocuments { querySnapshot, error in
+        db.collection("messages").order(by: "date").addSnapshotListener { querySnapshot, error in
             if let e = error {
                 print("There was an issue retrieving data from Firestore: \(e)")
             } else {
-                if let snapshotDocuments = querySnapshot?.documents {
-                    for doc in snapshotDocuments {
-                        let data = doc.data()
-                        if let messageSender = data["sender"] as? String, let messageBody = data["body"] as? String {
-                            let newMessage = Message(sender: messageSender, body: messageBody)
-                            self.messages.append(newMessage)
-                            
-                        }
-                    }
+                guard let snapshotDocuments = querySnapshot?.documents else {
+                    print("No documents")
+                    return
+                }
+                self.messages = snapshotDocuments.compactMap { queryDocumentSnapshot in
+                    let data = queryDocumentSnapshot.data()
+                    guard let messageSender = data["sender"] as? String,
+                          let messageBody = data["body"] as? String else {
+                              return nil
+                          }
+                    return Message(sender: messageSender, body: messageBody)
                 }
             }
         }
     }
+
     
 }
 
