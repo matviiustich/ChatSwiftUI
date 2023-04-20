@@ -15,9 +15,9 @@ struct WelcomeView: View {
     @Binding var presentWelcome: Bool
     
     var body: some View {
-        NavigationView {
+//        NavigationView {
             authenticationView
-        }
+//        }
     }
     
     var authenticationView: some View {

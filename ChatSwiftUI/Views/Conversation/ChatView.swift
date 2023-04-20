@@ -10,17 +10,12 @@ import Firebase
 
 struct ChatView: View {
     @State private var message = ""
-    @Binding var presentWelcome: Bool
     
     let db = Firestore.firestore()
     @State private var messages: [Message] = []
     
-    init(presentWelcome: Binding<Bool>) {
-        self._presentWelcome = presentWelcome
-    }
-    
     var body: some View {
-        NavigationView {
+        Group {
             VStack {
                 ScrollView(showsIndicators: false) {
                     LazyVStack(spacing: 15) {
@@ -51,16 +46,6 @@ struct ChatView: View {
             .animation(.default)
         }
         .navigationBarTitle("Messages")
-        .navigationBarItems(trailing: Button(action: {
-            do {
-                try Auth.auth().signOut()
-                presentWelcome = true
-            } catch {
-                print("Error signing out")
-            }
-        }, label: {
-            Text("Log Out")
-        }))
 
     }
     
@@ -153,6 +138,6 @@ struct ChatBubbleShape: Shape {
 
 struct ChatView_Preview: PreviewProvider {
     static var previews: some View {
-        ChatView(presentWelcome: .constant(false))
+        ChatView()
     }
 }

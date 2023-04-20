@@ -13,7 +13,7 @@ struct InitView: View {
     
     var body: some View {
         NavigationView {
-            ChatView(presentWelcome: $presentWelcome)
+            ChatsView(presentWelcome: $presentWelcome)
                 .fullScreenCover(isPresented: $presentWelcome) {
                     WelcomeView(presentWelcome: $presentWelcome)
                 }
@@ -23,6 +23,6 @@ struct InitView: View {
 
 struct InitView_Previews: PreviewProvider {
     static var previews: some View {
-        InitView()
+        InitView(presentWelcome: false)
     }
 }
