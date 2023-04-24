@@ -9,31 +9,46 @@ import SwiftUI
 import Firebase
 
 struct ChatView: View {
-    @State private var message = ""
     
+    let conversationID: String
     let db = Firestore.firestore()
+    
+    @State private var message = ""
     @State private var messages: [Message] = []
     
     var body: some View {
         Group {
             VStack {
-                ScrollView(showsIndicators: false) {
-                    LazyVStack(spacing: 15) {
-                        ForEach(messages) { message in
-                            //                            Text(message.body)
-                            ChatBubble(message: message)
+                ScrollViewReader { proxy in
+                    ScrollView(showsIndicators: false) {
+                        LazyVStack(spacing: 15) {
+                            ForEach(messages) { message in
+                                ChatBubble(message: message)
+                            }
                         }
+                        .padding()
+                        .onAppear(perform: {
+                            loadMessages()
+                            scrollToLastMessage(proxy: proxy)
+                        })
+                        .onChange(of: messages.count, perform: { _ in
+                            DispatchQueue.main.async {
+                                if let lastMessage = messages.last {
+                                    withAnimation {
+                                        proxy.scrollTo(lastMessage.id)
+                                    }
+                                }
+                            }
+                        })    
+                        .animation(.default)
                     }
-                    .padding()
-                    .onAppear(perform: loadMessages)
-                    .animation(.default)
+                    
                 }
                 
                 HStack(spacing: 15) {
                     TextField("Message", text: $message)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding(.horizontal)
-                        
                     Button(action: sendMessage, label: {
                         Image(systemName: "arrow.up.circle.fill")
                             .font(.system(size: 40))
@@ -45,13 +60,24 @@ struct ChatView: View {
             }
             .animation(.default)
         }
+        .dismissKeyboard()
         .navigationBarTitle("Messages")
-
+        
     }
     
-    func sendMessage() {
+    private func scrollToLastMessage(proxy: ScrollViewProxy) {
+        DispatchQueue.main.async {
+            if let lastMessage = messages.last {
+                withAnimation {
+                    proxy.scrollTo(lastMessage.id)
+                }
+            }
+        }
+    }
+    
+    private func sendMessage() {
         if message != "", let messageSender = Auth.auth().currentUser?.email {
-            db.collection("messages").addDocument(data: [
+            db.collection("messages").document(conversationID).collection("messages").addDocument(data: [
                 "sender": messageSender,
                 "body": message,
                 "date": Date().timeIntervalSince1970
@@ -67,7 +93,7 @@ struct ChatView: View {
     }
     
     private func loadMessages() -> Void {
-        db.collection("messages").order(by: "date").addSnapshotListener { querySnapshot, error in
+        db.collection("messages").document(conversationID).collection("messages").order(by: "date").addSnapshotListener { querySnapshot, error in
             if let e = error {
                 print("There was an issue retrieving data from Firestore: \(e)")
             } else {
@@ -79,14 +105,15 @@ struct ChatView: View {
                     let data = queryDocumentSnapshot.data()
                     guard let messageSender = data["sender"] as? String,
                           let messageBody = data["body"] as? String else {
-                              return nil
-                          }
+                        return nil
+                    }
                     return Message(sender: messageSender, body: messageBody)
                 }
+                
             }
         }
     }
-
+    
     
 }
 
@@ -104,6 +131,7 @@ struct ChatBubble: View {
                         .background(Color.blue)
                         .clipShape(ChatBubbleShape(isMe: true))
                         .padding(.trailing, 10)
+                        
                 } else {
                     Text(message.body)
                         .foregroundColor(.black)
@@ -138,6 +166,6 @@ struct ChatBubbleShape: Shape {
 
 struct ChatView_Preview: PreviewProvider {
     static var previews: some View {
-        ChatView()
+        ChatView(conversationID: "123")
     }
 }

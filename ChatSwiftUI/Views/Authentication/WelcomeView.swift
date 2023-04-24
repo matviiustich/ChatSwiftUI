@@ -51,10 +51,12 @@ struct WelcomeView: View {
         .sheet(isPresented: $isShowingLogIn) {
             LogInView(presentWelcome: $presentWelcome, isPresented: $isShowingLogIn)
                 .presentationDetents([.medium, .large])
+                .dismissKeyboard()
         }
         .sheet(isPresented: $isShowingRegister) {
             RegisterView(presentWelcome: $presentWelcome, isPresented: $isShowingRegister)
                 .presentationDetents([.medium, .large])
+                .dismissKeyboard()
         }
     }
 }
