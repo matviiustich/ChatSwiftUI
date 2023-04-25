@@ -77,7 +77,7 @@ struct ChatView: View {
     
     private func sendMessage() {
         if message != "", let messageSender = Auth.auth().currentUser?.email {
-            db.collection("messages").document(chat.id).collection("messages").addDocument(data: [
+            db.collection("conversations").document(chat.id).collection("messages").addDocument(data: [
                 "sender": messageSender,
                 "body": message,
                 "date": Date().timeIntervalSince1970
@@ -93,7 +93,7 @@ struct ChatView: View {
     }
     
     private func loadMessages() -> Void {
-        db.collection("messages").document(chat.id).collection("messages").order(by: "date").addSnapshotListener { querySnapshot, error in
+        db.collection("conversations").document(chat.id).collection("messages").order(by: "date").addSnapshotListener { querySnapshot, error in
             if let e = error {
                 print("There was an issue retrieving data from Firestore: \(e)")
             } else {

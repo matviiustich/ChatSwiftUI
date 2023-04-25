@@ -5,11 +5,6 @@
 //  Created by Александр Устич on 15.04.2023.
 //
 
-
-// m@mail.com
-// password
-
-
 import SwiftUI
 import Firebase
 

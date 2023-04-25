@@ -16,18 +16,20 @@ struct ChatsView: View {
     
     @State private var isCreateChatViewPresented: Bool = false
     @State private var chats: [Chat] = []
+    @State private var showProfileView: Bool = false
     
     var body: some View {
         List {
             ForEach(chats) { chat in
                 NavigationLink(destination: ChatView(chat: chat)) {
-                    Text(chat.participants[0])
+                    Text(chat.participants[0] == Auth.auth().currentUser?.email ? chat.participants[1] : chat.participants[0])
                 }
             }
         }
         .onAppear(perform: {
             if !presentWelcome {
                 loadChats()
+                print("Load chats")
             }
         })
         .navigationTitle("Chats")
@@ -37,13 +39,16 @@ struct ChatsView: View {
             Image(systemName: "square.and.pencil")
         }))
         .navigationBarItems(trailing: Button(action: {
-            signOut()
+            showProfileView = true
         }, label: {
-            Text("Log Out")
+            Image(systemName: "person.crop.circle")
         }))
         .sheet(isPresented: $isCreateChatViewPresented) {
             CreateChat(isCreateChatViewPresented: $isCreateChatViewPresented)
                 .presentationDetents([.medium, .large])
+        }
+        .fullScreenCover(isPresented: $showProfileView) {
+            ProfileView(presentWelcome: $presentWelcome, showProfileView: $showProfileView)
         }
     }
     
@@ -55,6 +60,7 @@ struct ChatsView: View {
         } catch let signOutError as NSError {
             print("Error signing out: %@", signOutError)
         }
+        print(chats.count)
     }
     
     private func loadChats() {

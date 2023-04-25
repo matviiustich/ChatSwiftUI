@@ -33,7 +33,6 @@ struct CreateChat: View {
             
             Button("New Chat") {
                 isEmailRegistered(email: email) { isRegistered in
-                    print(isRegistered)
                     if isRegistered {
                         let conversationsCollection = db.collection("conversations")
                         conversationsCollection.addDocument(data: [
@@ -63,7 +62,6 @@ struct CreateChat: View {
             }
             
             guard let methods = signInMethods else {
-                print("Sign in methods for email \(email) is nil.")
                 completion(false)
                 return
             }
@@ -71,8 +69,7 @@ struct CreateChat: View {
             if methods.isEmpty {
                 print("User with email \(email) is not registered.")
                 completion(false)
-            } else {
-                print("User with email \(email) is already registered with the following sign-in methods: \(methods)")
+            } else { 
                 completion(true)
             }
         }
