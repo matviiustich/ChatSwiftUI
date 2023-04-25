@@ -8,8 +8,7 @@
 import Foundation
 
 struct Chat: Identifiable {
-    let id = UUID()
+    let id: String
     let participants: [String]
     let lastMessage: String
-    let firestoreID: String
 }

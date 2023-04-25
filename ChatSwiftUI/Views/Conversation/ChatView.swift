@@ -10,7 +10,7 @@ import Firebase
 
 struct ChatView: View {
     
-    let conversationID: String
+    let chat: Chat
     let db = Firestore.firestore()
     
     @State private var message = ""
@@ -77,7 +77,7 @@ struct ChatView: View {
     
     private func sendMessage() {
         if message != "", let messageSender = Auth.auth().currentUser?.email {
-            db.collection("messages").document(conversationID).collection("messages").addDocument(data: [
+            db.collection("messages").document(chat.id).collection("messages").addDocument(data: [
                 "sender": messageSender,
                 "body": message,
                 "date": Date().timeIntervalSince1970
@@ -93,7 +93,7 @@ struct ChatView: View {
     }
     
     private func loadMessages() -> Void {
-        db.collection("messages").document(conversationID).collection("messages").order(by: "date").addSnapshotListener { querySnapshot, error in
+        db.collection("messages").document(chat.id).collection("messages").order(by: "date").addSnapshotListener { querySnapshot, error in
             if let e = error {
                 print("There was an issue retrieving data from Firestore: \(e)")
             } else {
@@ -103,11 +103,10 @@ struct ChatView: View {
                 }
                 self.messages = snapshotDocuments.compactMap { queryDocumentSnapshot in
                     let data = queryDocumentSnapshot.data()
-                    guard let messageSender = data["sender"] as? String,
-                          let messageBody = data["body"] as? String else {
-                        return nil
+                    if let messageSender = data["sender"] as? String, let messageBody = data["body"] as? String {
+                        return Message(id: queryDocumentSnapshot.documentID, sender: messageSender, body: messageBody)
                     }
-                    return Message(sender: messageSender, body: messageBody)
+                    return nil
                 }
                 
             }
@@ -166,6 +165,6 @@ struct ChatBubbleShape: Shape {
 
 struct ChatView_Preview: PreviewProvider {
     static var previews: some View {
-        ChatView(conversationID: "123")
+        ChatView(chat: Chat(id: "ADf124Dfkbj", participants: ["ivan@mail.com", "matthew@gmail.com"], lastMessage: "Bye"))
     }
 }

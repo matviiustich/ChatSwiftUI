@@ -20,14 +20,15 @@ struct ChatsView: View {
     var body: some View {
         List {
             ForEach(chats) { chat in
-                
-                NavigationLink(destination: ChatView(conversationID: chat.firestoreID)) {
+                NavigationLink(destination: ChatView(chat: chat)) {
                     Text(chat.participants[0])
                 }
             }
         }
         .onAppear(perform: {
-            loadChats()
+            if !presentWelcome {
+                loadChats()
+            }
         })
         .navigationTitle("Chats")
         .navigationBarItems(leading: Button(action: {
@@ -36,12 +37,7 @@ struct ChatsView: View {
             Image(systemName: "square.and.pencil")
         }))
         .navigationBarItems(trailing: Button(action: {
-            do {
-                try Auth.auth().signOut()
-                presentWelcome = true
-            } catch {
-                print("Error signing out")
-            }
+            signOut()
         }, label: {
             Text("Log Out")
         }))
@@ -51,7 +47,17 @@ struct ChatsView: View {
         }
     }
     
-    func loadChats() {
+    private func signOut() {
+        let firebaseAuth = Auth.auth()
+        do {
+            presentWelcome = true
+            try firebaseAuth.signOut()
+        } catch let signOutError as NSError {
+            print("Error signing out: %@", signOutError)
+        }
+    }
+    
+    private func loadChats() {
         let conversationsCollection = db.collection("conversations").order(by: "lastUpdate")
         let query = conversationsCollection.whereField("participants", arrayContains: Auth.auth().currentUser!.email!)
         
@@ -66,11 +72,10 @@ struct ChatsView: View {
                 
                 self.chats = snapshotDocuments.compactMap { queryDocumentSnapshot in
                     let data = queryDocumentSnapshot.data()
-                    guard let participants = data["participants"] as? [String],
-                          let lastMessage = data["lastMessage"] as? String else {
-                        return nil
+                    if let participants = data["participants"] as? [String], let lastMessage = data["lastMessage"] as? String {
+                        return Chat(id: queryDocumentSnapshot.documentID, participants: participants, lastMessage: lastMessage)
                     }
-                    return Chat(participants: participants, lastMessage: lastMessage, firestoreID: queryDocumentSnapshot.documentID)
+                    return nil
                 }
             }
         }
