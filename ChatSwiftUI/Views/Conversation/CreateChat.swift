@@ -12,7 +12,7 @@ struct CreateChat: View {
     let db = Firestore.firestore()
     
     @State var email: String = ""
-    @State var emailError: String = ""
+    @State var errorOccured: String = ""
     @Binding var isCreateChatViewPresented: Bool
     
     var body: some View {
@@ -26,31 +26,69 @@ struct CreateChat: View {
             .padding()
             .background(Color.gray.opacity(0.2))
             .cornerRadius(10)
-            Text(emailError)
+            Text(errorOccured)
                 .foregroundColor(.red)
                 .font(.system(size: 15))
                 .bold()
             
             Button("New Chat") {
-                isEmailRegistered(email: email) { isRegistered in
-                    if isRegistered {
-                        let conversationsCollection = db.collection("conversations")
-                        conversationsCollection.addDocument(data: [
-                            "participants": [Auth.auth().currentUser!.email, email], // an array of user emails participating in the conversation
-                            "lastMessage": "", // the text of the last message sent in the conversation
-                            "lastUpdate": Timestamp(date: Date()), // a timestamp indicating when the conversation was last updated
-                        ])
-                        isCreateChatViewPresented = false
-                    } else {
-                        emailError = "No users found with this email"
-                    }
+                if email != Auth.auth().currentUser!.email! {
+                    createChatIfNotExist(with: email)
                 }
-                
             }
         }
         .padding()
         .padding(.top, 45)
         .frame(maxHeight: .infinity, alignment: .top)
+    }
+    
+    func createChatIfNotExist(with email: String) {
+        isEmailRegistered(email: email) { isRegistered in
+            if isRegistered {
+                isChatExist(email: email) { isExist in
+                    if isExist {
+                        errorOccured = "Chat already exists"
+                    } else {
+                        // chat doesn't exist, create it
+                        print("Creating chat")
+                        let conversationsCollection = db.collection("conversations")
+                        conversationsCollection.addDocument(data: [
+                            "participants": [Auth.auth().currentUser!.email!, email].sorted(),
+                            "lastMessage": "",
+                            "lastUpdate": Timestamp(date: Date())
+                        ])
+                        isCreateChatViewPresented = false
+                    }
+                }
+            } else {
+                // email is not registered
+                errorOccured = "Email is not registered"
+            }
+        }
+    }
+
+    
+    private func isChatExist(email: String, completion: @escaping (Bool) -> Void) {
+        let currentUserEmail = Auth.auth().currentUser!.email!
+        let query = db.collection("conversations").whereField("participants", isEqualTo: [currentUserEmail, email].sorted())
+
+        query.getDocuments { (querySnapshot, error) in
+            if let _ = error {
+                completion(false)
+                return
+            } else if let snapshot = querySnapshot {
+                if !snapshot.isEmpty {
+                    errorOccured = "Chat already exists"
+                    completion(true)
+                    return
+                } else {
+                    // A conversation with the same participants doesn't exist
+                    completion(false)
+                    return
+                }
+            }
+        }
+
     }
     
     private func isEmailRegistered(email: String, completion: @escaping (Bool) -> Void) {

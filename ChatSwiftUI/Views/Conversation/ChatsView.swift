@@ -38,17 +38,14 @@ struct ChatsView: View {
         }, label: {
             Image(systemName: "square.and.pencil")
         }))
-        .navigationBarItems(trailing: Button(action: {
-            showProfileView = true
+        .navigationBarItems(trailing: NavigationLink(destination: {
+            ProfileView(presentWelcome: $presentWelcome)
         }, label: {
             Image(systemName: "person.crop.circle")
         }))
         .sheet(isPresented: $isCreateChatViewPresented) {
             CreateChat(isCreateChatViewPresented: $isCreateChatViewPresented)
                 .presentationDetents([.medium, .large])
-        }
-        .fullScreenCover(isPresented: $showProfileView) {
-            ProfileView(presentWelcome: $presentWelcome, showProfileView: $showProfileView)
         }
     }
     

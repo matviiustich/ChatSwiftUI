@@ -11,13 +11,12 @@ import Firebase
 struct ProfileView: View {
     
     @Binding var presentWelcome: Bool
-    @Binding var showProfileView: Bool
     
     let user = Auth.auth().currentUser
     
     var body: some View {
         VStack {
-            Text(user!.email!)
+            Text(user?.email ?? "Error")
                 .font(.system(size: 15))
                 .padding()
             Button {
@@ -32,7 +31,6 @@ struct ProfileView: View {
         let firebaseAuth = Auth.auth()
         do {
             presentWelcome = true
-            showProfileView = false
             try firebaseAuth.signOut()
         } catch let signOutError as NSError {
             print("Error signing out: %@", signOutError)
@@ -42,6 +40,6 @@ struct ProfileView: View {
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView(presentWelcome: .constant(false), showProfileView: .constant(true))
+        ProfileView(presentWelcome: .constant(false))
     }
 }
