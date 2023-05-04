@@ -8,8 +8,10 @@
 import SwiftUI
 import Firebase
 
+let db = Firestore.firestore()
+
 struct InitView: View {
-    @State var presentWelcome = (Auth.auth().currentUser != nil) ? false : true
+    @State var presentWelcome = (UserCredentials.shared.email != nil && UserCredentials.shared.password != nil) ? false : true
     
     var body: some View {
         NavigationView {

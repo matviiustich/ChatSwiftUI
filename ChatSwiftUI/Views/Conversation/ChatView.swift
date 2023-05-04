@@ -11,7 +11,6 @@ import Firebase
 struct ChatView: View {
     
     let chat: Chat
-    let db = Firestore.firestore()
     
     @State private var message = ""
     @State private var messages: [Message] = []
@@ -23,7 +22,7 @@ struct ChatView: View {
                     ScrollView(showsIndicators: false) {
                         LazyVStack(spacing: 15) {
                             ForEach(messages) { message in
-                                ChatBubble(message: message)
+                                ChatBubble(message: message, chatID: chat.id)
                             }
                         }
                         .padding()
@@ -32,14 +31,8 @@ struct ChatView: View {
                             scrollToLastMessage(proxy: proxy)
                         })
                         .onChange(of: messages.count, perform: { _ in
-                            DispatchQueue.main.async {
-                                if let lastMessage = messages.last {
-                                    withAnimation {
-                                        proxy.scrollTo(lastMessage.id)
-                                    }
-                                }
-                            }
-                        })    
+                            proxy.scrollToLastMessage(messages: messages)
+                        })
                         .animation(.default)
                     }
                     
@@ -111,55 +104,6 @@ struct ChatView: View {
                 
             }
         }
-    }
-    
-    
-}
-
-struct ChatBubble: View {
-    var message: Message
-    
-    var body: some View {
-        HStack {
-            Group {
-                if message.sender == Auth.auth().currentUser?.email {
-                    Spacer()
-                    Text(message.body)
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.blue)
-                        .clipShape(ChatBubbleShape(isMe: true))
-                        .padding(.trailing, 10)
-                        
-                } else {
-                    Text(message.body)
-                        .foregroundColor(.black)
-                        .padding()
-                        .background(Color(#colorLiteral(red: 0.9137253165, green: 0.9137256742, blue: 0.9223343134, alpha: 1)))
-                        .clipShape(ChatBubbleShape(isMe: false))
-                        .padding(.leading, 10)
-                    Spacer()
-                }
-            }
-            .contextMenu(menuItems: {
-                Button(action: {
-                    let generator = UIImpactFeedbackGenerator(style: .medium)
-                    generator.impactOccurred()
-                }) {
-                    Label("Share", systemImage: "square.and.arrow.up")
-                }
-            })
-        }
-        
-    }
-}
-
-struct ChatBubbleShape: Shape {
-    var isMe: Bool
-    
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: [.topLeft, .bottomLeft, isMe ? .bottomRight : .topRight], cornerRadii: CGSize(width: 20, height: 20))
-        return Path(path.cgPath)
     }
 }
 

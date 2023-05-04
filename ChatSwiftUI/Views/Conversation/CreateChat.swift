@@ -32,7 +32,7 @@ struct CreateChat: View {
                 .bold()
             
             Button("New Chat") {
-                if email != Auth.auth().currentUser!.email! {
+                if email != UserCredentials.shared.email! {
                     createChatIfNotExist(with: email)
                 }
             }

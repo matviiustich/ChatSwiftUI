@@ -12,11 +12,9 @@ struct ProfileView: View {
     
     @Binding var presentWelcome: Bool
     
-    let user = Auth.auth().currentUser
-    
     var body: some View {
         VStack {
-            Text(user?.email ?? "Error")
+            Text("\(UserCredentials.shared.email!)")
                 .font(.system(size: 15))
                 .padding()
             Button {
@@ -30,8 +28,9 @@ struct ProfileView: View {
     private func signOut() {
         let firebaseAuth = Auth.auth()
         do {
-            presentWelcome = true
             try firebaseAuth.signOut()
+            UserCredentials.shared.clear()
+            presentWelcome = true
         } catch let signOutError as NSError {
             print("Error signing out: %@", signOutError)
         }

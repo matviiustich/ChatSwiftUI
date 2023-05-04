@@ -13,6 +13,18 @@ extension View {
     }
 }
 
+extension ScrollViewProxy {
+    func scrollToLastMessage(messages: [Message]) {
+        DispatchQueue.main.async {
+            if let lastMessage = messages.last {
+                withAnimation {
+                    self.scrollTo(lastMessage.id)
+                }
+            }
+        }
+    }
+}
+
 struct DismissKeyboardModifier: ViewModifier {
     func body(content: Content) -> some View {
         content

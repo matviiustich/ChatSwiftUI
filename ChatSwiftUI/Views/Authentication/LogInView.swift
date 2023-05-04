@@ -40,9 +40,11 @@ struct LogInView: View {
                         if let p = error {
                             passwordError = p.localizedDescription
                         } else {
+                            passwordError = ""
+                            UserCredentials.shared.email = email
+                            UserCredentials.shared.password = password
                             presentWelcome = false
                             isPresented = false
-                            passwordError = ""
                         }
                     }
                 }
