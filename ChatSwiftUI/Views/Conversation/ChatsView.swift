@@ -16,7 +16,6 @@ struct ChatsView: View {
     
     @State private var isCreateChatViewPresented: Bool = false
     @State private var chats: [Chat] = []
-    @State private var showProfileView: Bool = false
     
     var body: some View {
         List {
@@ -37,11 +36,6 @@ struct ChatsView: View {
             isCreateChatViewPresented = true
         }, label: {
             Image(systemName: "square.and.pencil")
-        }))
-        .navigationBarItems(trailing: NavigationLink(destination: {
-            ProfileView(presentWelcome: $presentWelcome)
-        }, label: {
-            Image(systemName: "person.crop.circle")
         }))
         .sheet(isPresented: $isCreateChatViewPresented) {
             CreateChat(isCreateChatViewPresented: $isCreateChatViewPresented)

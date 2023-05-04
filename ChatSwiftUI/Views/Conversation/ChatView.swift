@@ -28,7 +28,6 @@ struct ChatView: View {
                         .padding()
                         .onAppear(perform: {
                             loadMessages()
-                            scrollToLastMessage(proxy: proxy)
                         })
                         .onChange(of: messages.count, perform: { _ in
                             proxy.scrollToLastMessage(messages: messages)
@@ -56,16 +55,6 @@ struct ChatView: View {
         .dismissKeyboard()
         .navigationBarTitle("Messages")
         
-    }
-    
-    private func scrollToLastMessage(proxy: ScrollViewProxy) {
-        DispatchQueue.main.async {
-            if let lastMessage = messages.last {
-                withAnimation {
-                    proxy.scrollTo(lastMessage.id)
-                }
-            }
-        }
     }
     
     private func sendMessage() {

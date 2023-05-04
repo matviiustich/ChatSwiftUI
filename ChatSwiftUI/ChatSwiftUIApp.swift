@@ -26,7 +26,7 @@ struct ChatSwiftUIApp: App {
     
     var body: some Scene {
         WindowGroup {
-            InitView()
+            ContentView()
         }
     }
 }
