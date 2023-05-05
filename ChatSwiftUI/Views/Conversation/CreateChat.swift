@@ -34,6 +34,8 @@ struct CreateChat: View {
             Button("New Chat") {
                 if email != UserCredentials.shared.email! {
                     createChatIfNotExist(with: email)
+                } else {
+                    errorOccured = "This is an email of the current user"
                 }
             }
         }
