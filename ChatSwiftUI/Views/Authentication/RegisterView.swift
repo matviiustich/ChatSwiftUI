@@ -41,6 +41,7 @@ struct RegisterView: View {
                         passwordError = ""
                         UserCredentials.shared.email = email
                         UserCredentials.shared.password = password
+                        UIApplication.shared.windows.first?.rootViewController = UIHostingController(rootView: ContentView())
                         presentWelcome = false
                         isPresented = false
                     }
