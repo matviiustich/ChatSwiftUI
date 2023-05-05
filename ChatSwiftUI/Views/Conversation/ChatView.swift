@@ -12,6 +12,8 @@ struct ChatView: View {
     
     let chat: Chat
     
+    @Binding var showTabBar: Bool
+    
     @State private var message = ""
     @State private var messages: [Message] = []
     
@@ -27,6 +29,7 @@ struct ChatView: View {
                         }
                         .padding()
                         .onAppear(perform: {
+                            showTabBar = false
                             loadMessages()
                         })
                         .onChange(of: messages.count, perform: { _ in
@@ -54,6 +57,7 @@ struct ChatView: View {
         }
         .dismissKeyboard()
         .navigationBarTitle("Messages")
+//        .toolbar(.hidden, for: .tabBar)
         
     }
     
@@ -98,6 +102,6 @@ struct ChatView: View {
 
 struct ChatView_Preview: PreviewProvider {
     static var previews: some View {
-        ChatView(chat: Chat(id: "ADf124Dfkbj", participants: ["ivan@mail.com", "matthew@gmail.com"], lastMessage: "Bye"))
+        ChatView(chat: Chat(id: "ADf124Dfkbj", participants: ["ivan@mail.com", "matthew@gmail.com"], lastMessage: "Bye"), showTabBar: .constant(false))
     }
 }

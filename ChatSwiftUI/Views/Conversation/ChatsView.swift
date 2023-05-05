@@ -17,15 +17,18 @@ struct ChatsView: View {
     @State private var isCreateChatViewPresented: Bool = false
     @State private var chats: [Chat] = []
     
+    @State var showTabBar: Bool = true
+    
     var body: some View {
         List {
             ForEach(chats) { chat in
-                NavigationLink(destination: ChatView(chat: chat)) {
+                NavigationLink(destination: ChatView(chat: chat, showTabBar: $showTabBar)) {
                     Text(chat.participants[0] == Auth.auth().currentUser?.email ? chat.participants[1] : chat.participants[0])
                 }
             }
         }
         .onAppear(perform: {
+            showTabBar = true
             if !presentWelcome {
                 loadChats()
                 print("Load chats")
@@ -41,6 +44,7 @@ struct ChatsView: View {
             CreateChat(isCreateChatViewPresented: $isCreateChatViewPresented)
                 .presentationDetents([.medium, .large])
         }
+        .toolbar(showTabBar ? .visible : .hidden, for: .tabBar)
     }
     
     private func signOut() {
