@@ -39,7 +39,6 @@ struct ChatView: View {
                     }
                     
                 }
-                
                 HStack(spacing: 15) {
                     TextField("Message", text: $message)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -55,28 +54,49 @@ struct ChatView: View {
             }
             .animation(.default)
         }
+        
         .dismissKeyboard()
         .navigationBarTitle("Messages")
-//        .toolbar(.hidden, for: .tabBar)
+        .toolbar(showTabBar ? .visible : .hidden, for: .tabBar)
         
     }
     
     private func sendMessage() {
-        if message != "", let messageSender = Auth.auth().currentUser?.email {
+        let messageBody = message
+        if messageBody != "", let messageSender = Auth.auth().currentUser?.email {
+            message = ""
             db.collection("conversations").document(chat.id).collection("messages").addDocument(data: [
                 "sender": messageSender,
-                "body": message,
+                "body": messageBody,
                 "date": Date().timeIntervalSince1970
             ]) { (error) in
                 if let e = error {
                     print("The error occured while saving data to Firestore, \(e)")
                 } else {
+                    let updateConversationMessageData = ["lastMessage": messageBody]
+                    let updateConversationTimeDta = ["lastUpdate": Timestamp(date: Date())]
+                    // Update last message
+                    updateConversation(conversationID: chat.id, withData: updateConversationMessageData)
+                    // Update date
+                    updateConversation(conversationID: chat.id, withData: updateConversationTimeDta)
                     print("Successfully saved data")
                 }
             }
         }
-        message = ""
     }
+    
+    func updateConversation(conversationID: String, withData data: [String: Any]) {
+        let conversationRef = db.collection("conversations").document(conversationID)
+        conversationRef.updateData(data) { error in
+            if let error = error {
+                print("Error updating conversation lastUpdate date: \(error)")
+            } else {
+                print("Conversation lastUpdate date updated successfully.")
+            }
+        }
+    }
+    
+    
     
     private func loadMessages() -> Void {
         db.collection("conversations").document(chat.id).collection("messages").order(by: "date").addSnapshotListener { querySnapshot, error in
@@ -98,6 +118,7 @@ struct ChatView: View {
             }
         }
     }
+    
 }
 
 struct ChatView_Preview: PreviewProvider {

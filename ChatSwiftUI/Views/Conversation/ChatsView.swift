@@ -20,20 +20,23 @@ struct ChatsView: View {
     @State var showTabBar: Bool = true
     
     var body: some View {
-        List {
-            ForEach(chats) { chat in
-                NavigationLink(destination: ChatView(chat: chat, showTabBar: $showTabBar)) {
-                    Text(chat.participants[0] == Auth.auth().currentUser?.email ? chat.participants[1] : chat.participants[0])
+        NavigationView {
+            List {
+                ForEach(chats) { chat in
+                    NavigationLink(destination: ChatView(chat: chat, showTabBar: $showTabBar)) {
+                        ChatCell(chat: chat)
+                    }
                 }
             }
+            .onAppear(perform: {
+                showTabBar = true
+                if !presentWelcome {
+                    loadChats()
+                    print("Load chats")
+                }
+            })
+            
         }
-        .onAppear(perform: {
-            showTabBar = true
-            if !presentWelcome {
-                loadChats()
-                print("Load chats")
-            }
-        })
         .navigationTitle("Chats")
         .navigationBarItems(leading: Button(action: {
             isCreateChatViewPresented = true
@@ -45,6 +48,7 @@ struct ChatsView: View {
                 .presentationDetents([.medium, .large])
         }
         .toolbar(showTabBar ? .visible : .hidden, for: .tabBar)
+        .toolbar(showTabBar ? .visible : .hidden, for: .automatic)
     }
     
     private func signOut() {
@@ -81,6 +85,20 @@ struct ChatsView: View {
             }
         }
         
+    }
+}
+
+struct ChatCell: View {
+    let chat: Chat
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(chat.participants[0] == Auth.auth().currentUser?.email ? chat.participants[1] : chat.participants[0])
+                .font(.headline)
+            Text(chat.lastMessage)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+        }
     }
 }
 
