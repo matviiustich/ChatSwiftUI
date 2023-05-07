@@ -75,9 +75,8 @@ struct ChatView: View {
                 } else {
                     let updateConversationMessageData = ["lastMessage": messageBody]
                     let updateConversationTimeDta = ["lastUpdate": Timestamp(date: Date())]
-                    // Update last message
+
                     updateConversation(conversationID: chat.id, withData: updateConversationMessageData)
-                    // Update date
                     updateConversation(conversationID: chat.id, withData: updateConversationTimeDta)
                     print("Successfully saved data")
                 }
